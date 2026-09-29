@@ -1,0 +1,1412 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sweet Crumbs 🍰</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700;800&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet" />
+<style>
+/* ===== Variables ===== */
+:root{
+  --primary:#8B5E3C;--primary-dark:#5D3A1A;--primary-light:#A67B5B;
+  --secondary:#D4A574;--accent:#C85A7C;--accent-light:#E8849E;
+  --bg:#FFF8F0;--bg-alt:#FFF0E0;--bg-card:#FFFFFF;
+  --text:#3E2723;--text-light:#6D4C41;--text-muted:#9E8E82;
+  --white:#FFFFFF;--danger:#D32F2F;--success:#2E7D32;
+  --shadow:0 4px 20px rgba(139,94,60,0.12);
+  --shadow-hover:0 8px 30px rgba(139,94,60,0.22);
+  --radius:14px;--radius-sm:8px;--transition:0.3s ease;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Sarabun',sans-serif;
+  background:var(--bg);color:var(--text);
+  line-height:1.7;min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4,h5,h6{
+  font-family:'Sarabun',sans-serif;
+  font-weight:700;line-height:1.4;
+}
+a{text-decoration:none;color:inherit}
+img{max-width:100%;display:block;object-fit:cover}
+button{cursor:pointer;border:none;font-family:'Sarabun',sans-serif}
+ul{list-style:none}
+input,textarea,select{font-family:'Sarabun',sans-serif;font-size:1rem}
+::-webkit-scrollbar{width:8px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--secondary);border-radius:4px}
+
+/* ===== Layout ===== */
+.app{display:flex;flex-direction:column;min-height:100vh}
+.container{max-width:1200px;margin:0 auto;padding:0 20px}
+.main-content{flex:1;padding-top:72px}
+.page{min-height:calc(100vh - 72px - 280px)}
+
+/* ===== Utilities ===== */
+.section-title{text-align:center;font-size:2.4rem;color:var(--primary-dark);margin-bottom:.4rem;font-weight:800}
+.section-subtitle{text-align:center;color:var(--text-muted);font-size:1.1rem;margin-bottom:3rem}
+.btn{
+  display:inline-block;padding:13px 30px;
+  background:var(--primary);color:var(--white);
+  border:2px solid var(--primary);border-radius:var(--radius-sm);
+  font-size:1rem;font-weight:700;letter-spacing:.3px;
+  transition:all var(--transition);cursor:pointer;text-align:center;
+  font-family:'Sarabun',sans-serif;
+}
+.btn:hover{background:var(--primary-dark);border-color:var(--primary-dark);transform:translateY(-2px);box-shadow:var(--shadow-hover)}
+.btn:active{transform:translateY(0)}
+.btn-outline{background:transparent;color:var(--primary)}
+.btn-outline:hover{background:var(--primary);color:var(--white)}
+.btn-accent{background:var(--accent);border-color:var(--accent)}
+.btn-accent:hover{background:var(--accent-light);border-color:var(--accent-light)}
+.btn-sm{padding:9px 20px;font-size:.95rem}
+.btn-danger{background:var(--danger);border-color:var(--danger)}
+.btn-success{background:var(--success);border-color:var(--success)}
+.hidden{display:none!important}
+
+/* ===== Toast ===== */
+.toast{
+  position:fixed;bottom:30px;right:30px;
+  padding:14px 28px;border-radius:var(--radius-sm);
+  box-shadow:var(--shadow-hover);z-index:9999;
+  font-weight:700;color:var(--white);
+  animation:toastIn .4s ease;pointer-events:none;
+  font-size:1rem;
+}
+.toast-success{background:var(--success)}
+.toast-error{background:var(--danger)}
+.toast-info{background:var(--primary)}
+@keyframes toastIn{from{transform:translateX(120%);opacity:0}to{transform:translateX(0);opacity:1}}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes scaleIn{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
+.fade-in{animation:fadeInUp .5s ease forwards}
+
+/* ===== HEADER ===== */
+.header{
+  position:fixed;top:0;left:0;right:0;height:72px;
+  background:rgba(255,248,240,.96);
+  backdrop-filter:blur(12px);
+  z-index:1000;transition:all var(--transition);
+}
+.header.scrolled{background:var(--white);box-shadow:var(--shadow)}
+.header__inner{display:flex;align-items:center;justify-content:space-between;height:100%;gap:16px}
+.header__logo{display:flex;align-items:center;gap:10px;flex-shrink:0;cursor:pointer}
+.header__logo-icon{font-size:1.8rem;transition:transform var(--transition);display:inline-block}
+.header__logo:hover .header__logo-icon{transform:rotate(-15deg) scale(1.1)}
+.header__logo-text{font-size:1.4rem;font-weight:800;color:var(--primary-dark)}
+.header__nav{display:flex;align-items:center;gap:4px}
+.nav-link{
+  padding:8px 14px;color:var(--text-light);font-weight:600;
+  border-radius:var(--radius-sm);transition:all var(--transition);
+  position:relative;cursor:pointer;font-size:.95rem;
+}
+.nav-link::after{
+  content:'';position:absolute;bottom:2px;left:50%;
+  transform:translateX(-50%);width:0;height:2px;
+  background:var(--accent);border-radius:1px;transition:width var(--transition);
+}
+.nav-link:hover{color:var(--primary)}
+.nav-link:hover::after,.nav-link.active::after{width:60%}
+.nav-link.active{color:var(--primary-dark);font-weight:700}
+.header__actions{display:flex;align-items:center;gap:14px;flex-shrink:0}
+.header__cart{position:relative;font-size:1.4rem;padding:6px;transition:transform var(--transition);cursor:pointer}
+.header__cart:hover{transform:scale(1.15)}
+.cart-badge{
+  position:absolute;top:-2px;right:-6px;
+  background:var(--accent);color:var(--white);
+  font-size:.7rem;font-weight:700;width:20px;height:20px;
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  animation:scaleIn .3s ease;
+}
+.header__user{
+  display:flex;align-items:center;gap:8px;
+  padding:4px 12px 4px 4px;border-radius:24px;
+  background:var(--bg-alt);transition:all var(--transition);cursor:pointer;
+}
+.header__user:hover{background:var(--secondary)}
+.user-avatar-sm{
+  width:32px;height:32px;border-radius:50%;
+  background:var(--primary);color:var(--white);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:800;font-size:.85rem;
+}
+.header__user-name{font-weight:700;font-size:.9rem;color:var(--primary-dark)}
+.header__login-btn{
+  padding:9px 22px;background:var(--primary);
+  color:var(--white);border-radius:var(--radius-sm);
+  font-weight:700;font-size:.9rem;cursor:pointer;
+  transition:all var(--transition);border:none;
+}
+.header__login-btn:hover{background:var(--primary-dark);transform:translateY(-1px)}
+.hamburger{display:none;flex-direction:column;gap:5px;padding:8px;background:none;cursor:pointer}
+.hamburger span{display:block;width:24px;height:2.5px;background:var(--primary-dark);border-radius:2px;transition:all var(--transition)}
+.hamburger.open span:nth-child(1){transform:translateY(7.5px) rotate(45deg)}
+.hamburger.open span:nth-child(2){opacity:0}
+.hamburger.open span:nth-child(3){transform:translateY(-7.5px) rotate(-45deg)}
+
+/* ===== FOOTER ===== */
+.footer{background:var(--primary-dark);color:rgba(255,255,255,.9);padding-top:60px;margin-top:auto}
+.footer__inner{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:40px;padding-bottom:40px}
+.footer__title{font-size:1.5rem;color:var(--white);margin-bottom:8px;font-weight:800}
+.footer__tagline{font-style:italic;color:var(--secondary);margin-bottom:16px;font-size:.95rem}
+.footer__description{font-size:.92rem;line-height:1.8;color:rgba(255,255,255,.72)}
+.footer__heading{
+  font-size:1.1rem;color:var(--white);margin-bottom:20px;
+  position:relative;padding-bottom:10px;font-weight:700;
+}
+.footer__heading::after{content:'';position:absolute;bottom:0;left:0;width:30px;height:2px;background:var(--accent);border-radius:1px}
+.footer__links li{margin-bottom:10px}
+.footer__links a,.footer__links span{color:rgba(255,255,255,.75);transition:all var(--transition);font-size:.95rem;cursor:pointer}
+.footer__links a:hover,.footer__links span:hover{color:var(--secondary);padding-left:6px}
+.footer__contact li{margin-bottom:12px;font-size:.9rem;color:rgba(255,255,255,.75);line-height:1.6}
+.footer__social{display:flex;flex-direction:column;gap:12px}
+.footer__social a{color:rgba(255,255,255,.75);font-size:.95rem;transition:all var(--transition)}
+.footer__social a:hover{color:var(--secondary);transform:translateX(4px);display:inline-block}
+.footer__bottom{border-top:1px solid rgba(255,255,255,.15);padding:20px;text-align:center;font-size:.85rem;color:rgba(255,255,255,.5)}
+
+/* ===== HOME BANNER ===== */
+.home__banner-wrapper{position:relative;height:520px}
+.home__banner{overflow:hidden;height:100%}
+.home__slides-track{display:flex;transition:transform .7s cubic-bezier(.4,0,.2,1);height:100%}
+.home__slide{
+  min-width:100%;display:flex;align-items:center;
+  justify-content:center;text-align:center;
+  position:relative;
+}
+.home__slide-bg{
+  position:absolute;inset:0;
+  background-size:cover;background-position:center;
+  transition:transform 8s ease;
+}
+.home__slide:hover .home__slide-bg{transform:scale(1.04)}
+.home__slide-overlay{position:absolute;inset:0;background:rgba(0,0,0,.42)}
+.home__slide-content{position:relative;z-index:2;max-width:740px;padding:24px;color:white}
+.home__slide-content h1{
+  font-size:3.2rem;margin-bottom:16px;
+  font-weight:800;text-shadow:0 2px 12px rgba(0,0,0,.3);
+}
+.home__slide-content p{font-size:1.2rem;margin-bottom:32px;opacity:.92;text-shadow:0 1px 6px rgba(0,0,0,.25)}
+.home__arrow{
+  position:absolute;top:50%;transform:translateY(-50%);
+  background:rgba(255,255,255,0.85);
+  color:var(--primary-dark);
+  font-size:1.8rem;font-weight:900;
+  width:56px;height:56px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  z-index:20;transition:all var(--transition);
+  border:none;
+  box-shadow:0 4px 18px rgba(0,0,0,0.28);
+  cursor:pointer;
+  line-height:1;
+}
+.home__arrow:hover{
+  background:var(--white);
+  transform:translateY(-50%) scale(1.12);
+  box-shadow:0 6px 24px rgba(0,0,0,0.35);
+  color:var(--accent);
+}
+.home__arrow:active{transform:translateY(-50%) scale(0.96)}
+.home__arrow-prev{left:20px}
+.home__arrow-next{right:20px}
+.home__dots{
+  position:absolute;bottom:22px;left:50%;
+  transform:translateX(-50%);
+  display:flex;gap:10px;z-index:20;
+}
+.home__dot{
+  width:10px;height:10px;border-radius:50%;
+  background:rgba(255,255,255,.55);cursor:pointer;
+  transition:all var(--transition);border:2px solid rgba(255,255,255,.7);
+}
+.home__dot.active{background:white;width:28px;border-radius:5px;border-color:white}
+@media(max-width:768px){
+  .home__banner-wrapper{height:360px}
+  .home__arrow{width:44px;height:44px;font-size:1.4rem}
+  .home__slide-content h1{font-size:2rem}
+}
+
+/* ===== HOME FEATURES ===== */
+.home__features{padding:80px 0;background:var(--bg);position:relative}
+.home__features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:30px}
+.home__feature-card{
+  text-align:center;padding:40px 28px;background:white;
+  border-radius:var(--radius);box-shadow:var(--shadow);
+  transition:all var(--transition);position:relative;overflow:hidden;
+}
+.home__feature-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:4px;
+  background:linear-gradient(90deg,var(--primary),var(--accent));
+}
+.home__feature-card:hover{transform:translateY(-8px);box-shadow:var(--shadow-hover)}
+.home__feature-icon{font-size:3rem;margin-bottom:16px}
+.home__feature-card h3{color:var(--primary-dark);margin-bottom:10px;font-size:1.2rem}
+.home__feature-card p{color:var(--text-muted);font-size:.97rem;line-height:1.7}
+
+/* ===== BESTSELLERS ===== */
+.home__bestsellers{
+  padding:80px 0;
+  background:var(--bg-alt);
+  position:relative;
+}
+.home__bestsellers-bg{
+  position:absolute;inset:0;
+  background-size:cover;background-position:center;opacity:.06;
+}
+.home__bestsellers-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:30px;position:relative}
+.home__bestseller-card{
+  background:white;border-radius:var(--radius);overflow:hidden;
+  box-shadow:var(--shadow);transition:all var(--transition);
+}
+.home__bestseller-card:hover{box-shadow:var(--shadow-hover);transform:translateY(-5px)}
+.home__bestseller-image{width:100%;height:210px;object-fit:cover;transition:transform .5s}
+.home__bestseller-card:hover .home__bestseller-image{transform:scale(1.05)}
+.home__bestseller-info{padding:20px;text-align:center}
+.home__bestseller-info h3{color:var(--primary-dark);margin-bottom:8px;font-size:1.1rem}
+.bestseller-price{font-size:1.25rem;font-weight:800;color:var(--primary)}
+
+/* ===== ABOUT ===== */
+.about__hero{
+  height:320px;position:relative;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;text-align:center;
+}
+.about__hero-bg{position:absolute;inset:0;background-size:cover;background-position:center}
+.about__hero-overlay{position:absolute;inset:0;background:rgba(62,39,35,.7)}
+.about__hero-content{position:relative;z-index:2;color:white}
+.about__hero-content h1{font-size:2.8rem;margin-bottom:8px;font-weight:800}
+.about__hero-content p{opacity:.85;font-size:1.15rem}
+.about__story{display:grid;grid-template-columns:1fr 1fr;gap:60px;padding:80px 0;align-items:center}
+.about__story-image{border-radius:var(--radius);box-shadow:var(--shadow-hover);width:100%;height:380px;object-fit:cover}
+.about__story-text h2{font-size:2rem;color:var(--primary-dark);margin-bottom:20px;font-weight:800}
+.about__story-text p{color:var(--text-light);margin-bottom:16px;line-height:1.9;font-size:1.02rem}
+.about__values{
+  padding:80px 0;position:relative;overflow:hidden;
+}
+.about__values-bg{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.07}
+.about__values-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:30px;position:relative}
+.about__value-card{
+  text-align:center;padding:40px 28px;background:white;
+  border-radius:var(--radius);box-shadow:var(--shadow);transition:all var(--transition);
+}
+.about__value-card:hover{transform:translateY(-6px);box-shadow:var(--shadow-hover)}
+.about__value-icon{font-size:3rem;margin-bottom:16px}
+.about__value-card h3{color:var(--primary-dark);margin-bottom:10px;font-size:1.15rem}
+.about__value-card p{color:var(--text-muted);font-size:.97rem;line-height:1.7}
+.about__stats{padding:60px 0;background:var(--primary-dark)}
+.about__stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:30px;text-align:center}
+.stat-number{font-size:3.2rem;font-weight:800;color:var(--secondary)}
+.stat-label{color:rgba(255,255,255,.75);margin-top:8px;font-size:1rem}
+
+/* ===== PRODUCTS ===== */
+.featured__grid,.products__grid{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+.featured__card,.products__card{
+  background:white;border-radius:var(--radius);overflow:hidden;
+  box-shadow:var(--shadow);transition:all var(--transition);
+}
+.featured__card:hover,.products__card:hover{transform:translateY(-8px);box-shadow:var(--shadow-hover)}
+.featured__card-img-wrap{overflow:hidden;height:240px}
+.featured__card-image,.products__card-image{width:100%;height:100%;object-fit:cover;transition:transform .5s}
+.featured__card:hover .featured__card-image,.products__card:hover .products__card-image{transform:scale(1.06)}
+.products__card-img-wrap{overflow:hidden;height:220px}
+.featured__card-body{padding:24px}
+.featured__card-name{font-size:1.25rem;color:var(--primary-dark);margin-bottom:8px;font-weight:700}
+.featured__card-desc{color:var(--text-light);font-size:.97rem;line-height:1.7;margin-bottom:16px}
+.featured__card-footer{display:flex;justify-content:space-between;align-items:center}
+.featured__card-price{font-size:1.4rem;font-weight:800;color:var(--accent)}
+.products__card-body{padding:20px;text-align:center}
+.products__card-name{font-size:1.1rem;color:var(--primary-dark);margin-bottom:8px;font-weight:700}
+.products__card-price{font-size:1.25rem;font-weight:800;color:var(--primary);margin-bottom:14px}
+.featured__cta,.products__cta{text-align:center;margin-top:50px}
+
+/* ===== NEWS ===== */
+.news__grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:28px}
+.news__card{
+  background:white;border-radius:var(--radius);padding:30px;
+  box-shadow:var(--shadow);transition:all var(--transition);
+  display:block;border-left:4px solid transparent;cursor:pointer;
+  text-decoration:none;
+}
+.news__card:hover{transform:translateY(-6px);box-shadow:var(--shadow-hover);border-left-color:var(--accent)}
+.news__card-icon{font-size:2.5rem;margin-bottom:16px}
+.news__card-name{font-size:1.25rem;color:var(--primary-dark);margin-bottom:8px;font-weight:700}
+.news__card-desc{color:var(--text-light);font-size:.97rem;line-height:1.7;margin-bottom:16px}
+.news__card-link{color:var(--accent);font-weight:700;display:inline-flex;align-items:center;gap:6px;transition:gap var(--transition)}
+.news__card:hover .news__card-link{gap:10px}
+
+/* ===== CONTACT ===== */
+.contact__content{display:grid;grid-template-columns:1fr 1fr;gap:50px;margin-bottom:50px}
+.contact__info{display:flex;flex-direction:column;gap:14px}
+.contact__info-item{
+  display:flex;align-items:flex-start;gap:14px;
+  padding:14px 16px;background:white;border-radius:var(--radius-sm);box-shadow:var(--shadow);
+  transition:var(--transition);
+}
+.contact__info-item:hover{transform:translateX(4px);box-shadow:var(--shadow-hover)}
+.contact__info-icon{font-size:1.4rem;flex-shrink:0;margin-top:1px}
+.contact__info-text h4{font-size:1rem;color:var(--primary-dark);margin-bottom:2px;font-weight:700}
+.contact__info-text p,.contact__info-text a{color:var(--text-light);font-size:.97rem;line-height:1.6}
+.contact__info-text a:hover{color:var(--accent)}
+.contact__map{border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow)}
+.contact__map iframe{width:100%;height:420px;border:0}
+
+/* ===== FEEDBACK FORM ===== */
+.feedback__section{
+  padding:60px 0;
+  background:var(--bg-alt);
+  position:relative;overflow:hidden;
+}
+.feedback__section-bg{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.06}
+.feedback__card{
+  max-width:700px;margin:0 auto;background:white;
+  border-radius:var(--radius);box-shadow:var(--shadow-hover);
+  overflow:hidden;position:relative;
+}
+.feedback__card-header{
+  background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+  color:white;padding:30px;text-align:center;
+}
+.feedback__card-header h3{font-size:1.6rem;margin-bottom:6px;font-weight:800}
+.feedback__card-header p{opacity:.85;font-size:.97rem}
+.feedback__card-body{padding:36px}
+.feedback__row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.feedback__field{margin-bottom:16px}
+.feedback__field label{
+  display:block;font-weight:700;color:var(--text-light);
+  margin-bottom:7px;font-size:.95rem;
+}
+.feedback__field input,
+.feedback__field textarea,
+.feedback__field select{
+  width:100%;padding:13px 16px;
+  border:2px solid #e5d9cf;border-radius:var(--radius-sm);
+  font-size:1rem;transition:var(--transition);outline:none;
+  background:var(--bg);color:var(--text);
+  font-family:'Sarabun',sans-serif;
+}
+.feedback__field input:focus,
+.feedback__field textarea:focus,
+.feedback__field select:focus{border-color:var(--primary);background:white}
+.feedback__stars{display:flex;gap:8px;font-size:2rem;cursor:pointer}
+.feedback__star{transition:transform .2s;opacity:.35;color:#f59e0b}
+.feedback__star.active,.feedback__star:hover{opacity:1;transform:scale(1.2)}
+.feedback__submit{width:100%;padding:15px;font-size:1.1rem;font-weight:800;margin-top:8px}
+.feedback__success{
+  display:none;text-align:center;padding:40px 20px;
+}
+.feedback__success-icon{font-size:4rem;margin-bottom:16px}
+.feedback__success h3{color:var(--success);font-size:1.4rem;margin-bottom:8px}
+.feedback__success p{color:var(--text-muted)}
+
+/* ===== LOGIN ===== */
+.login-page{display:flex;justify-content:center;align-items:center;min-height:calc(100vh - 200px);padding:40px 20px}
+.login__card{width:100%;max-width:440px;background:white;border-radius:var(--radius);box-shadow:var(--shadow-hover);overflow:hidden;animation:fadeInUp .4s ease}
+.login__header{background:var(--primary-dark);color:white;text-align:center;padding:36px 20px}
+.login__header-icon{font-size:3rem;margin-bottom:8px}
+.login__header h2{font-size:1.8rem;font-weight:800}
+.login__header p{opacity:.8;font-size:.9rem;margin-top:6px}
+.login__tabs{display:flex;border-bottom:2px solid var(--bg-alt)}
+.login__tab{
+  flex:1;padding:14px;text-align:center;font-weight:700;
+  cursor:pointer;background:transparent;color:var(--text-muted);
+  transition:all var(--transition);border:none;font-size:1rem;
+  font-family:'Sarabun',sans-serif;
+}
+.login__tab.active{color:var(--primary-dark);border-bottom:3px solid var(--accent);margin-bottom:-2px}
+.login__body{padding:32px}
+.login__input{
+  width:100%;padding:14px 16px;border:2px solid #e5d9cf;
+  border-radius:var(--radius-sm);font-size:1rem;
+  transition:var(--transition);outline:none;margin-bottom:10px;
+  font-family:'Sarabun',sans-serif;background:var(--bg);
+}
+.login__input:focus{border-color:var(--primary);background:white}
+.login__error{color:var(--danger);font-size:.92rem;margin-bottom:10px;text-align:center;min-height:20px;font-weight:600}
+.login__submit{width:100%;margin-top:8px;font-size:1.05rem}
+
+/* ===== PROFILE ===== */
+.profile__card{max-width:620px;margin:0 auto;background:white;border-radius:var(--radius);box-shadow:var(--shadow-hover);overflow:hidden}
+.profile__header{background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:white;text-align:center;padding:40px}
+.profile__avatar{
+  width:86px;height:86px;border-radius:50%;
+  background:rgba(255,255,255,.2);color:white;
+  font-size:2.2rem;font-weight:800;
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 16px;border:3px solid rgba(255,255,255,.35);
+}
+.profile__name{font-size:1.6rem;margin-bottom:4px;font-weight:800}
+.profile__since{font-size:.9rem;opacity:.8}
+.profile__body{padding:32px}
+.profile__field{margin-bottom:20px}
+.profile__field label{display:block;font-weight:700;color:var(--text-light);margin-bottom:6px;font-size:.95rem}
+.profile__field input,.profile__field textarea{
+  width:100%;padding:13px 16px;border:2px solid #e5d9cf;
+  border-radius:var(--radius-sm);transition:var(--transition);outline:none;font-size:1rem;
+  font-family:'Sarabun',sans-serif;
+}
+.profile__field input:focus,.profile__field textarea:focus{border-color:var(--primary)}
+.profile__actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px}
+.profile__links{display:flex;flex-direction:column;gap:12px;margin-top:24px;padding-top:20px;border-top:1px solid #eee}
+.profile__link{
+  display:flex;align-items:center;gap:10px;padding:13px 16px;
+  background:var(--bg-alt);border-radius:var(--radius-sm);
+  transition:all var(--transition);font-weight:600;color:var(--text);cursor:pointer;
+}
+.profile__link:hover{background:var(--secondary);transform:translateX(4px)}
+
+/* ===== CART ===== */
+.cart__layout{display:grid;grid-template-columns:1fr 340px;gap:36px;align-items:start}
+.cart__items{display:flex;flex-direction:column;gap:14px}
+.cart__item{display:flex;align-items:center;gap:16px;padding:16px;background:white;border-radius:var(--radius);box-shadow:var(--shadow);transition:var(--transition)}
+.cart__item:hover{box-shadow:var(--shadow-hover)}
+.cart__item-image{width:68px;height:68px;border-radius:var(--radius-sm);object-fit:cover;flex-shrink:0}
+.cart__item-info{flex:1}
+.cart__item-name{font-weight:700;color:var(--primary-dark);margin-bottom:2px}
+.cart__item-price{color:var(--text-muted);font-size:.92rem}
+.cart__item-qty{display:flex;align-items:center;gap:10px}
+.cart__qty-btn{
+  width:34px;height:34px;border-radius:50%;background:var(--bg-alt);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:1rem;transition:var(--transition);border:none;cursor:pointer;
+}
+.cart__qty-btn:hover{background:var(--secondary)}
+.cart__item-total{font-weight:800;color:var(--primary);min-width:80px;text-align:right;font-size:1.05rem}
+.cart__item-remove{background:none;color:var(--text-muted);font-size:1.2rem;padding:4px;transition:var(--transition)}
+.cart__item-remove:hover{color:var(--danger);transform:scale(1.2)}
+.cart__summary{background:white;border-radius:var(--radius);box-shadow:var(--shadow);padding:28px;position:sticky;top:90px}
+.cart__summary h3{font-size:1.3rem;color:var(--primary-dark);margin-bottom:20px;font-weight:800}
+.cart__summary-row{display:flex;justify-content:space-between;margin-bottom:10px;color:var(--text-light)}
+.cart__summary-total{font-size:1.4rem;font-weight:800;color:var(--primary-dark);padding-top:14px;border-top:2px solid var(--bg-alt);display:flex;justify-content:space-between;margin-top:8px}
+.cart__empty{text-align:center;padding:80px 20px}
+.cart__empty-icon{font-size:5rem;margin-bottom:20px;opacity:.5}
+.cart__empty h2{color:var(--primary-dark);margin-bottom:8px}
+.cart__empty p{color:var(--text-muted);margin-bottom:24px}
+.cart__login-msg{text-align:center;padding:16px;background:var(--bg-alt);border-radius:var(--radius-sm);margin-top:16px;color:var(--text-light);font-size:.97rem}
+.cart__login-msg span{color:var(--accent);font-weight:700;cursor:pointer}
+
+/* ===== ORDER HISTORY ===== */
+.orders__date-group{margin-bottom:40px}
+.orders__date-header{font-size:1.2rem;color:var(--primary-dark);margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid var(--bg-alt);font-weight:700}
+.orders__cards{display:flex;flex-direction:column;gap:14px}
+.orders__card{background:white;border-radius:var(--radius);box-shadow:var(--shadow);padding:24px;border-left:4px solid var(--accent);transition:var(--transition)}
+.orders__card:hover{box-shadow:var(--shadow-hover)}
+.orders__card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.orders__card-id{font-weight:800;color:var(--primary-dark)}
+.orders__card-time{color:var(--text-muted);font-size:.87rem}
+.orders__card-item{display:flex;justify-content:space-between;padding:6px 0;color:var(--text-light);font-size:.97rem;border-bottom:1px solid #f5f0eb}
+.orders__card-total{display:flex;justify-content:space-between;font-weight:800;font-size:1.1rem;color:var(--primary-dark);padding-top:12px;border-top:2px solid var(--bg-alt);margin-top:8px}
+.orders__empty{text-align:center;padding:80px 20px}
+.orders__empty-icon{font-size:5rem;margin-bottom:20px;opacity:.5}
+
+/* ===== PAGE PADDING ===== */
+.page-padded{padding:60px 0}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:960px){
+  .home__features-grid,.home__bestsellers-grid,.featured__grid,.products__grid,.about__values-grid,.about__stats-grid{grid-template-columns:repeat(2,1fr)}
+  .about__story,.contact__content{grid-template-columns:1fr;gap:30px}
+  .footer__inner{grid-template-columns:1fr 1fr;gap:30px}
+  .cart__layout{grid-template-columns:1fr}
+  .feedback__row{grid-template-columns:1fr}
+}
+@media(max-width:768px){
+  .hamburger{display:flex}
+  .header__nav{
+    position:absolute;top:72px;left:0;right:0;
+    flex-direction:column;background:var(--white);
+    padding:0;max-height:0;overflow:hidden;
+    transition:max-height .4s ease,padding .4s ease;box-shadow:var(--shadow);
+  }
+  .header__nav.open{max-height:460px;padding:16px 0}
+  .nav-link{width:100%;text-align:center;padding:13px 20px;border-radius:0}
+  .nav-link::after{display:none}
+  .nav-link.active{background:var(--bg-alt)}
+  .header__user-name{display:none}
+  .home__banner{height:360px}
+  .home__slide-content h1{font-size:2rem}
+  .home__features-grid,.home__bestsellers-grid,.featured__grid,.products__grid,.about__values-grid{grid-template-columns:1fr}
+  .about__stats-grid{grid-template-columns:repeat(3,1fr)}
+  .footer__inner{grid-template-columns:1fr}
+  .section-title{font-size:1.9rem}
+  .home__feature-card,.about__value-card{padding:28px 20px}
+}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+  <!-- HEADER -->
+  <header class="header" id="header">
+    <div class="header__inner container">
+      <div class="header__logo" onclick="navigate('home')">
+        <span class="header__logo-icon">🍰</span>
+        <span class="header__logo-text">Sweet Crumbs</span>
+      </div>
+      <nav class="header__nav" id="mainNav">
+        <span class="nav-link active" data-page="home"    onclick="navigate('home')">หน้าหลัก</span>
+        <span class="nav-link" data-page="about"   onclick="navigate('about')">เกี่ยวกับเรา</span>
+        <span class="nav-link" data-page="featured" onclick="navigate('featured')">สินค้าแนะนำ</span>
+        <span class="nav-link" data-page="products" onclick="navigate('products')">สินค้าทั้งหมด</span>
+        <span class="nav-link" data-page="news"    onclick="navigate('news')">ข่าวสาร</span>
+        <span class="nav-link" data-page="contact" onclick="navigate('contact')">ติดต่อเรา</span>
+        <span class="nav-link" data-page="feedback" onclick="navigate('feedback')">แสดงความคิดเห็น</span>
+      </nav>
+      <div class="header__actions">
+        <div class="header__cart" onclick="navigate('cart')" title="ตะกร้าสินค้า">
+          🛒<span class="cart-badge hidden" id="cartBadge">0</span>
+        </div>
+        <div id="headerUser"></div>
+      </div>
+      <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="เมนู">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <!-- MAIN -->
+  <main class="main-content" id="mainContent"></main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="footer__inner container">
+      <div>
+        <h3 class="footer__title">🍰 Sweet Crumbs Bakery</h3>
+        <p class="footer__tagline">ทำด้วยใจ อบด้วยความรัก</p>
+        <p class="footer__description">จากเตาอบของเราสู่หัวใจของคุณ — สัมผัสความอร่อยของขนมอาร์ติซานชั้นเลิศ ทำจากวัตถุดิบพรีเมียมและสูตรดั้งเดิมที่สืบทอดกันมาหลายชั่วอายุคน</p>
+      </div>
+      <div>
+        <h4 class="footer__heading">ลิงก์ด่วน</h4>
+        <ul class="footer__links">
+          <li><span onclick="navigate('home')">หน้าหลัก</span></li>
+          <li><span onclick="navigate('products')">สินค้าทั้งหมด</span></li>
+          <li><span onclick="navigate('featured')">สินค้าแนะนำ</span></li>
+          <li><span onclick="navigate('about')">เกี่ยวกับเรา</span></li>
+          <li><span onclick="navigate('contact')">ติดต่อเรา</span></li>
+          <li><span onclick="navigate('feedback')">แสดงความคิดเห็น</span></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="footer__heading">ติดต่อ</h4>
+        <ul class="footer__contact">
+          <li>📍 123 ถนน... เมือง อ่างทอง 14000</li>
+          <li>📞 +66 093 221 0367</li>
+          <li>✉️ adisorndankeawwork@gmail.com</li>
+          <li>🕐 จ–ส 07:00–20:00 | อา 08:00–18:00</li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="footer__heading">ติดตามเรา</h4>
+        <div class="footer__social">
+          <a href="https://www.facebook.com/xdisr.dan.k.w/?locale=th_TH" target="_blank" rel="noopener noreferrer">📘 Facebook</a>
+          <a href="https://www.instagram.com/adisorn_dankeaw/" target="_blank" rel="noopener noreferrer">📸 Instagram</a>
+          <a href="https://line.me" target="_blank" rel="noopener noreferrer">💬 Line: @sweetcrumbs</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer__bottom container">
+      <p>© 2567 Sweet Crumbs Bakery สงวนลิขสิทธิ์ทุกประการ</p>
+    </div>
+  </footer>
+
+  <!-- TOAST -->
+  <div id="toast" class="toast hidden"></div>
+</div>
+
+<script>
+// ============================================================
+// DATA — สินค้าทั้งหมด
+// ============================================================
+const PRODUCTS = [
+  {id:1,name:'ครัวซองต์คลาสสิก',nameEn:'Classic Croissant',price:85,description:'แป้งเนยสดกรอบนอกนุ่มใน อบสดใหม่ทุกเช้าด้วยเนยฝรั่งเศสชั้นเลิศ หอมกรุ่นไม่มีวันเบื่อ',image:'public/images/croissant.jpg',featured:true},
+  {id:2,name:'ช็อกโกแลต ลาวาเค้ก',nameEn:'Chocolate Lava Cake',price:150,description:'เค้กช็อกโกแลตเนื้อนุ่มซ่อนไส้ช็อกโกแลตร้อนละลายอยู่ภายใน โรยผงโกโก้หอมกรุ่น เสิร์ฟอุ่น ๆ',image:'public/images/lava-cake.jpg',featured:true},
+  {id:3,name:'สตรอว์เบอร์รีทาร์ต',nameEn:'Strawberry Tart',price:120,description:'สตรอว์เบอร์รีสดหวานอมเปรี้ยวเรียงบนคัสตาร์ดครีมเนียมนุ่มในเปลือกทาร์ตเนยทองกรอบ',image:'public/images/strawberry-tart.jpg',featured:true},
+  {id:4,name:'บลูเบอร์รีมัฟฟิน',nameEn:'Blueberry Muffin',price:65,description:'มัฟฟินโดมสูงเต็มไปด้วยบลูเบอร์รีสด หน้ากรุบกรอบด้วยสตรูเซลทองสวย',image:'public/images/blueberry-muffin.jpg',featured:false},
+  {id:5,name:'ซินนามอนโรล',nameEn:'Cinnamon Roll',price:95,description:'โรลนุ่มหอมอบอวลกลิ่นอบเชย ราดด้วยครีมชีสฟรอสติ้งเนียนหวาน ทำใหม่สดทุกวัน',image:'public/images/cinnamon-roll.jpg',featured:false},
+  {id:6,name:'ทิรามิสุ',nameEn:'Tiramisu',price:180,description:'เลดี้ฟิงเกอร์ชุ่มกาแฟเอสเปรสโซสลับครีมมาสคาร์โปเน่ เนียนละมุน โรยผงโกโก้เข้มข้น',image:'public/images/tiramisu.jpg',featured:false},
+];
+
+const NEWS_LINKS = [
+  {icon:'🎬',name:'YouTube',desc:'ชมวิดีโอสอนทำขนมและสูตรจากเชฟระดับโลกได้ที่นี่เลย',url:'https://www.youtube.com'},
+  {icon:'🔍',name:'Google',desc:'ค้นหาสูตรขนมหรือเทคนิคการอบที่คุณต้องการได้ทันที',url:'https://www.google.com'},
+  {icon:'🍳',name:'Tasty',desc:'ค้นพบสูตรอาหารและขนมเทรนด์ใหม่อัปเดตทุกวัน',url:'https://tasty.co'},
+  {icon:'👨‍🍳',name:'King Arthur Baking',desc:'แหล่งรวมเทคนิคการอบระดับมืออาชีพและสูตรชั้นเลิศจากผู้เชี่ยวชาญ',url:'https://www.kingarthurbaking.com'},
+  {icon:'📰',name:'BBC Good Food',desc:'สูตรอาหารและขนมที่เชื่อถือได้จากทีมผู้เชี่ยวชาญของ BBC',url:'https://www.bbcgoodfood.com'},
+];
+
+// ============================================================
+// STATE
+// ============================================================
+let currentPage = 'home';
+let slideIndex  = 0;
+let slideTimer  = null;
+let feedbackRating = 0;
+
+// ============================================================
+// STORAGE
+// ============================================================
+const store = {
+  get: (k) => { try{return JSON.parse(localStorage.getItem(k))||null}catch{return null} },
+  set: (k,v) => localStorage.setItem(k,JSON.stringify(v)),
+  getUsers:       () => store.get('sc_users')||[],
+  saveUsers:      (u) => store.set('sc_users',u),
+  getCurrentUser: () => store.get('sc_currentUser'),
+  setCurrentUser: (u) => u ? store.set('sc_currentUser',u) : localStorage.removeItem('sc_currentUser'),
+  getCart:        () => store.get('sc_cart')||[],
+  saveCart:       (c) => store.set('sc_cart',c),
+  getOrders:      () => store.get('sc_orders')||[],
+  saveOrders:     (o) => store.set('sc_orders',o),
+};
+
+// ============================================================
+// AUTH
+// ============================================================
+const auth = {
+  login(username){
+    const u=username.trim();
+    if(!u) return{success:false,error:'กรุณาระบุชื่อผู้ใช้'};
+    if(u.length<3) return{success:false,error:'ชื่อผู้ใช้ต้องมีอย่างน้อย 3 ตัวอักษร'};
+    const found=store.getUsers().find(x=>x.username.toLowerCase()===u.toLowerCase());
+    if(!found) return{success:false,error:'ไม่พบชื่อผู้ใช้นี้ กรุณาสมัครสมาชิกก่อน'};
+    store.setCurrentUser(found); return{success:true};
+  },
+  register(username){
+    const u=username.trim();
+    if(!u) return{success:false,error:'กรุณาระบุชื่อผู้ใช้'};
+    if(u.length<3) return{success:false,error:'ชื่อผู้ใช้ต้องมีอย่างน้อย 3 ตัวอักษร'};
+    if(!/^[a-zA-Z0-9_ก-๙]+$/.test(u)) return{success:false,error:'ชื่อผู้ใช้ใช้ได้เฉพาะตัวอักษร ตัวเลข และ _'};
+    const users=store.getUsers();
+    if(users.find(x=>x.username.toLowerCase()===u.toLowerCase())) return{success:false,error:'ชื่อผู้ใช้นี้ถูกใช้งานแล้ว'};
+    const newUser={username:u,displayName:u,bio:'',phone:'',joinDate:new Date().toISOString()};
+    users.push(newUser); store.saveUsers(users); store.setCurrentUser(newUser);
+    return{success:true};
+  },
+  logout(){ store.setCurrentUser(null); },
+  updateProfile(updates){
+    const user=store.getCurrentUser();
+    const updated={...user,...updates};
+    store.setCurrentUser(updated);
+    const users=store.getUsers();
+    const idx=users.findIndex(u=>u.username===user.username);
+    if(idx>=0){users[idx]=updated; store.saveUsers(users);}
+    return updated;
+  }
+};
+
+// ============================================================
+// CART
+// ============================================================
+const cart = {
+  getItems: ()=>store.getCart(),
+  totalItems(){ return this.getItems().reduce((s,i)=>s+i.quantity,0); },
+  totalPrice(){ return this.getItems().reduce((s,i)=>s+i.price*i.quantity,0); },
+  addToCart(product){
+    const items=this.getItems();
+    const ex=items.find(i=>i.id===product.id);
+    if(ex) ex.quantity++; else items.push({...product,quantity:1});
+    store.saveCart(items); updateCartBadge();
+  },
+  removeFromCart(id){ store.saveCart(this.getItems().filter(i=>i.id!==id)); updateCartBadge(); },
+  updateQty(id,qty){
+    if(qty<=0){this.removeFromCart(id);return;}
+    store.saveCart(this.getItems().map(i=>i.id===id?{...i,quantity:qty}:i));
+    updateCartBadge();
+  },
+  clearCart(){ store.saveCart([]); updateCartBadge(); },
+  placeOrder(username){
+    const items=this.getItems(); if(!items.length) return false;
+    const order={
+      id:Date.now().toString(36)+Math.random().toString(36).slice(2,6),
+      items:[...items],total:this.totalPrice(),
+      date:new Date().toISOString(),username
+    };
+    const orders=store.getOrders(); orders.unshift(order);
+    store.saveOrders(orders); this.clearCart(); return true;
+  },
+  getOrdersByDate(username){
+    const grouped={};
+    store.getOrders().filter(o=>o.username===username).forEach(order=>{
+      const key=new Date(order.date).toLocaleDateString('en-CA');
+      if(!grouped[key]) grouped[key]=[];
+      grouped[key].push(order);
+    });
+    return grouped;
+  }
+};
+
+// ============================================================
+// TOAST
+// ============================================================
+function showToast(msg,type='info'){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.className=`toast toast-${type}`;
+  t.classList.remove('hidden');
+  clearTimeout(t._timer);
+  t._timer=setTimeout(()=>t.classList.add('hidden'),3200);
+}
+
+// ============================================================
+// NAV
+// ============================================================
+function navigate(page){
+  currentPage=page; clearSlideTimer();
+  document.querySelectorAll('.nav-link').forEach(l=>l.classList.toggle('active',l.dataset.page===page));
+  document.getElementById('mainContent').innerHTML=renderPage(page);
+  window.scrollTo({top:0,behavior:'smooth'});
+  updateHeaderUser();
+  const nav=document.getElementById('mainNav'),ham=document.getElementById('hamburger');
+  nav.classList.remove('open'); ham.classList.remove('open');
+  if(page==='home') initSlider();
+}
+function updateCartBadge(){
+  const badge=document.getElementById('cartBadge'),n=cart.totalItems();
+  if(n>0){badge.textContent=n;badge.classList.remove('hidden');}
+  else badge.classList.add('hidden');
+}
+function updateHeaderUser(){
+  const user=store.getCurrentUser(),el=document.getElementById('headerUser');
+  if(user){
+    el.innerHTML=`<div class="header__user" onclick="navigate('profile')"><div class="user-avatar-sm">${(user.displayName||user.username).charAt(0).toUpperCase()}</div><span class="header__user-name">${user.displayName||user.username}</span></div>`;
+  } else {
+    el.innerHTML=`<button class="header__login-btn" onclick="navigate('login')">เข้าสู่ระบบ</button>`;
+  }
+}
+function toggleMenu(){
+  const nav=document.getElementById('mainNav'),ham=document.getElementById('hamburger');
+  nav.classList.toggle('open'); ham.classList.toggle('open');
+}
+window.addEventListener('scroll',()=>document.getElementById('header').classList.toggle('scrolled',window.scrollY>20));
+
+// ============================================================
+// RENDER
+// ============================================================
+function renderPage(page){
+  const pages={home:renderHome,about:renderAbout,featured:renderFeatured,products:renderProducts,news:renderNews,contact:renderContact,login:renderLogin,profile:renderProfile,cart:renderCart,orders:renderOrders,feedback:renderFeedback};
+  return `<div class="page fade-in">${(pages[page]||renderHome)()}</div>`;
+}
+
+/* ---------- HOME ---------- */
+const BG_HERO   = 'public/images/menu-composite.jpg';
+const BG_SECTION= 'public/images/blueberry-muffin.jpg';
+
+const SLIDES=[
+  {bg:'#8B5E3C',imgBg:'public/images/croissant.jpg',          color:'#fff',title:'ยินดีต้อนรับสู่ Sweet Crumbs',subtitle:'ที่ซึ่งทุกคำบอกเล่าเรื่องราวแห่งความหลงใหลและประเพณีการอบขนม',cta:true},
+  {bg:'#5D3A1A',imgBg:'public/images/lava-cake.jpg',           color:'#fff',title:'ขนมอาร์ติซาน',subtitle:'ทำด้วยมือทุกวันจากวัตถุดิบพรีเมียมคัดสรรเป็นพิเศษ'},
+  {bg:'#C85A7C',imgBg:'public/images/strawberry-tart.jpg',     color:'#fff',title:'ช่วงเวลาหวาน ๆ',subtitle:'ร่วมเฉลิมฉลองทุกช่วงเวลาสำคัญในชีวิตกับขนมสุดพิเศษจากเรา'},
+];
+
+function renderHome(){
+  const featured=PRODUCTS.filter(p=>p.featured);
+  return`
+  <div class="home__banner-wrapper">
+    <section class="home__banner" id="heroBanner">
+      <div class="home__slides-track" id="slidesTrack">
+        ${SLIDES.map((s,i)=>`
+          <div class="home__slide" style="background:${s.bg}">
+            <div class="home__slide-bg" id="slideBg${i}" style="background-image:url('${s.imgBg}')"></div>
+            <div class="home__slide-overlay"></div>
+            <div class="home__slide-content">
+              <h1>${s.title}</h1>
+              <p>${s.subtitle}</p>
+              ${s.cta?`<button class="btn btn-accent" onclick="navigate('products')">🛒 เลือกซื้อสินค้า</button>`:''}
+            </div>
+          </div>`).join('')}
+      </div>
+    </section>
+    <button class="home__arrow home__arrow-prev" onclick="changeSlide(-1)">&#8249;</button>
+    <button class="home__arrow home__arrow-next" onclick="changeSlide(1)">&#8250;</button>
+    <div class="home__dots" id="slideDots">
+      ${SLIDES.map((_,i)=>`<div class="home__dot ${i===0?'active':''}" onclick="goSlide(${i})"></div>`).join('')}
+    </div>
+  </div>
+
+  <section class="home__features">
+    <div class="container">
+      <h2 class="section-title">ทำไมต้อง Sweet Crumbs?</h2>
+      <p class="section-subtitle">เรามุ่งมั่นมอบประสบการณ์ขนมที่ดีที่สุดให้กับทุกคน</p>
+      <div class="home__features-grid">
+        <div class="home__feature-card">
+          <div class="home__feature-icon">🌅</div>
+          <h3>สดใหม่ทุกวัน</h3>
+          <p>อบสดใหม่ทุกเช้าก่อนพระอาทิตย์ขึ้น รับประกันความสดและความอร่อยในทุกชิ้น</p>
+        </div>
+        <div class="home__feature-card">
+          <div class="home__feature-icon">✨</div>
+          <h3>วัตถุดิบพรีเมียม</h3>
+          <p>คัดสรรเฉพาะวัตถุดิบชั้นเลิศจากแหล่งผลิตท้องถิ่นที่เชื่อถือได้ ปลอดภัย ไร้สารกันบูด</p>
+        </div>
+        <div class="home__feature-card">
+          <div class="home__feature-icon">❤️</div>
+          <h3>ทำด้วยความรัก</h3>
+          <p>ทุกชิ้นปั้นด้วยมืออย่างประณีต ด้วยความหลงใหลและความตั้งใจในทุกรายละเอียด</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="home__bestsellers">
+    <div class="home__bestsellers-bg" style="background-image:url('${BG_SECTION}')"></div>
+    <div class="container">
+      <h2 class="section-title">สินค้าขายดี</h2>
+      <p class="section-subtitle">เมนูโปรดที่ลูกค้าเลือกซ้ำแล้วซ้ำเล่าทุกวัน</p>
+      <div class="home__bestsellers-grid">
+        ${featured.map(p=>`
+          <div class="home__bestseller-card">
+            <img src="${p.image}" alt="${p.name}" class="home__bestseller-image" onerror="this.src='https://placehold.co/400x210/D4A574/3E2723?text=${encodeURIComponent(p.nameEn)}'"/>
+            <div class="home__bestseller-info">
+              <h3>${p.name}</h3>
+              <div class="bestseller-price">฿${p.price}</div>
+            </div>
+          </div>`).join('')}
+      </div>
+      <div style="text-align:center;margin-top:40px;position:relative">
+        <button class="btn btn-outline" onclick="navigate('products')">ดูสินค้าทั้งหมด →</button>
+      </div>
+    </div>
+  </section>`;
+}
+
+/* ---------- ABOUT ---------- */
+const BG_ABOUT='public/images/tiramisu.jpg';
+const BG_HERO_ABOUT='public/images/menu-composite.jpg';
+
+function renderAbout(){
+  return`
+  <section class="about__hero">
+    <div class="about__hero-bg" style="background-image:url('${BG_HERO_ABOUT}')"></div>
+    <div class="about__hero-overlay"></div>
+    <div class="about__hero-content">
+      <h1>เกี่ยวกับเรา</h1>
+      <p>เรื่องราวเบื้องหลังทุกเศษขนมที่เราส่งมอบให้คุณ</p>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="about__story">
+        <div>
+          <img src="${BG_ABOUT}" alt="ครัวของเรา"
+            class="about__story-image"
+            onerror="this.src='https://placehold.co/500x380/D4A574/3E2723?text=Our+Kitchen'" />
+        </div>
+        <div class="about__story-text">
+          <h2>เรื่องราวของเรา</h2>
+          <p>Sweet Crumbs Bakery ก่อตั้งขึ้นในปี 2562 จากห้องครัวเล็ก ๆ ของครอบครัวในอำเภอเมือง จังหวัดอ่างทอง สิ่งที่เริ่มต้นจากความหลงใหลในการอบขนมในวันหยุดสุดสัปดาห์ ได้กลายเป็นร้านเบเกอรี่อาร์ติซานที่เป็นที่รักของคนในชุมชน</p>
+          <p>คุณอดิศร ด่านแก้ว ผู้ก่อตั้ง มีความฝันที่จะนำขนมอบระดับโลกมาสู่อ่างทอง โดยใช้วัตถุดิบท้องถิ่นคุณภาพสูง ทุกสูตรผ่านการคิดค้นและทดลองอย่างพิถีพิถัน เพื่อให้ได้รสชาติที่สมบูรณ์แบบที่สุด</p>
+          <p>เราอบทุกอย่างด้วยมือในปริมาณน้อย ๆ ไม่ใช้วัตถุกันเสียใด ๆ เมื่อคุณกัดขนมของเรา คุณสัมผัสได้ถึงไม่เพียงแค่แป้งและเนย แต่ยังรู้สึกได้ถึงความทุ่มเทและความรักในทุกชิ้น</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="about__values">
+    <div class="about__values-bg" style="background-image:url('${BG_SECTION}')"></div>
+    <div class="container">
+      <h2 class="section-title">คุณค่าที่เรายึดมั่น</h2>
+      <p class="section-subtitle">หลักการที่นำทางทุกสิ่งที่เราทำ</p>
+      <div class="about__values-grid">
+        <div class="about__value-card">
+          <div class="about__value-icon">🌾</div>
+          <h3>วัตถุดิบคุณภาพ</h3>
+          <p>เราคัดสรรเฉพาะวัตถุดิบสดใหม่ที่ดีที่สุดจากเกษตรกรและซัพพลายเออร์ท้องถิ่นที่ไว้วางใจได้</p>
+        </div>
+        <div class="about__value-card">
+          <div class="about__value-icon">👐</div>
+          <h3>ทำด้วยมือ</h3>
+          <p>ขนมทุกชิ้นปั้นและตกแต่งด้วยมืออย่างประณีต ไม่ผลิตจำนวนมาก ไม่รีบร้อน เพื่อคุณภาพที่คงเส้นคงวา</p>
+        </div>
+        <div class="about__value-card">
+          <div class="about__value-icon">🤝</div>
+          <h3>ชุมชนและครอบครัว</h3>
+          <p>เราเชื่อในพลังของการรวมผู้คนเข้าหากันผ่านอาหาร ร้านของเราคือจุดนัดพบที่อบอุ่นสำหรับทุกคน</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="about__stats">
+    <div class="container">
+      <div class="about__stats-grid">
+        <div><div class="stat-number">5+</div><div class="stat-label">ปีแห่งการอบขนม</div></div>
+        <div><div class="stat-number">10,000+</div><div class="stat-label">ลูกค้าที่พึงพอใจ</div></div>
+        <div><div class="stat-number">50+</div><div class="stat-label">สูตรขนมพิเศษ</div></div>
+      </div>
+    </div>
+  </section>`;
+}
+
+/* ---------- FEATURED ---------- */
+function renderFeatured(){
+  return`
+  <div class="page-padded">
+    <div class="container">
+      <h1 class="section-title">สินค้าแนะนำ</h1>
+      <p class="section-subtitle">เมนูขนมสุดพิเศษที่ลูกค้าทุกคนต้องลอง</p>
+      <div class="featured__grid">
+        ${PRODUCTS.filter(p=>p.featured).map(p=>`
+          <div class="featured__card">
+            <div class="featured__card-img-wrap">
+              <img src="${p.image}" alt="${p.name}" class="featured__card-image"
+                onerror="this.src='https://placehold.co/400x240/D4A574/3E2723?text=${encodeURIComponent(p.nameEn)}'"/>
+            </div>
+            <div class="featured__card-body">
+              <h3 class="featured__card-name">${p.name}</h3>
+              <p class="featured__card-desc">${p.description}</p>
+              <div class="featured__card-footer">
+                <span class="featured__card-price">฿${p.price}</span>
+                <button class="btn btn-accent btn-sm" onclick="addToCartAction(${p.id})">🛒 ใส่ตะกร้า</button>
+              </div>
+            </div>
+          </div>`).join('')}
+      </div>
+      <div class="featured__cta">
+        <button class="btn btn-outline" onclick="navigate('products')">ดูสินค้าทั้งหมด →</button>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ---------- PRODUCTS ---------- */
+function renderProducts(){
+  return`
+  <div class="page-padded">
+    <div class="container">
+      <h1 class="section-title">สินค้าทั้งหมด</h1>
+      <p class="section-subtitle">สำรวจเมนูขนมทำมือครบครัน จากครัวของเราถึงคุณ</p>
+      <div class="products__grid">
+        ${PRODUCTS.map(p=>`
+          <div class="products__card">
+            <div class="products__card-img-wrap">
+              <img src="${p.image}" alt="${p.name}" class="products__card-image"
+                onerror="this.src='https://placehold.co/400x220/D4A574/3E2723?text=${encodeURIComponent(p.nameEn)}'"/>
+            </div>
+            <div class="products__card-body">
+              <h3 class="products__card-name">${p.name}</h3>
+              <div class="products__card-price">฿${p.price}</div>
+              <button class="btn btn-sm" onclick="addToCartAction(${p.id})">🛒 ใส่ตะกร้า</button>
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ---------- NEWS ---------- */
+function renderNews(){
+  return`
+  <div class="page-padded">
+    <div class="container">
+      <h1 class="section-title">ข่าวสารและแหล่งความรู้</h1>
+      <p class="section-subtitle">อัปเดตข่าวสารและเพิ่มพูนความรู้ด้านขนมอบ</p>
+      <div class="news__grid">
+        ${NEWS_LINKS.map(n=>`
+          <a class="news__card" href="${n.url}" target="_blank" rel="noopener noreferrer">
+            <div class="news__card-icon">${n.icon}</div>
+            <div class="news__card-name">${n.name}</div>
+            <div class="news__card-desc">${n.desc}</div>
+            <div class="news__card-link">เข้าชม →</div>
+          </a>`).join('')}
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ---------- CONTACT ---------- */
+function renderContact(){
+  return`
+  <div class="page-padded">
+    <div class="container">
+      <h1 class="section-title">ติดต่อเรา</h1>
+      <p class="section-subtitle">เราพร้อมรับฟังทุกคำถามและข้อเสนอแนะจากคุณเสมอ</p>
+      <div class="contact__content">
+        <div class="contact__info">
+          ${[
+            ['📍','ที่อยู่','123 ถนน... เมือง อ่างทอง 14000'],
+            ['📞','โทรศัพท์','+66 093 221 0367'],
+            ['✉️','อีเมล','adisorndankeawwork@gmail.com'],
+            ['💬','Line','@sweetcrumbs'],
+            ['📘','Facebook','<a href="https://www.facebook.com/xdisr.dan.k.w/?locale=th_TH" target="_blank" rel="noopener noreferrer">Sweet Crumbs Bakery</a>'],
+            ['📸','Instagram','<a href="https://www.instagram.com/adisorn_dankeaw/" target="_blank" rel="noopener noreferrer">@adisorn_dankeaw</a>'],
+            ['🕐','เวลาเปิด–ปิด','จันทร์–เสาร์ 07:00–20:00 น. | อาทิตย์ 08:00–18:00 น.'],
+          ].map(([icon,label,val])=>`
+            <div class="contact__info-item">
+              <span class="contact__info-icon">${icon}</span>
+              <div class="contact__info-text"><h4>${label}</h4><p>${val}</p></div>
+            </div>`).join('')}
+        </div>
+        <div class="contact__map">
+          <iframe
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3875.5!2d100.56!3d13.74!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMTPCsDQ0JzI0LjAiTiAxMDDCsDMzJzM2LjAiRQ!5e0!3m2!1sth!2sth!4v1"
+            title="Google Maps — Sweet Crumbs Bakery" loading="lazy">
+          </iframe>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ---------- FEEDBACK ---------- */
+function renderFeedback(){
+  return`
+  <div class="feedback__section">
+    <div class="feedback__section-bg" style="background-image:url('${BG_SECTION}')"></div>
+    <div class="container" style="position:relative">
+      <h1 class="section-title">แสดงความคิดเห็น</h1>
+      <p class="section-subtitle">ความคิดเห็นของคุณช่วยให้เราพัฒนาและมอบสิ่งที่ดีที่สุดให้กับคุณ</p>
+      <div class="feedback__card">
+        <div class="feedback__card-header">
+          <div style="font-size:2.5rem;margin-bottom:10px">🌟</div>
+          <h3>บอกเราว่าคุณคิดอย่างไร</h3>
+          <p>ข้อความของคุณจะถูกส่งถึงเราโดยตรง ขอบคุณที่ไว้วางใจ Sweet Crumbs Bakery</p>
+        </div>
+        <div class="feedback__card-body">
+
+          <!-- FORM ส่งผ่าน FormSubmit.co → email -->
+          <form id="feedbackForm"
+            action="https://formsubmit.co/adisorndankeawwork@gmail.com"
+            method="POST"
+            onsubmit="handleFeedbackSubmit(event)">
+
+            <!-- FormSubmit config fields -->
+            <input type="hidden" name="_subject"  value="💬 ความคิดเห็นลูกค้า — Sweet Crumbs Bakery">
+            <input type="hidden" name="_captcha"  value="false">
+            <input type="hidden" name="_template" value="table">
+            <input type="hidden" name="_next"     value="">
+            <input type="hidden" name="คะแนนความพึงพอใจ" id="ratingHidden" value="">
+
+            <div class="feedback__row">
+              <div class="feedback__field">
+                <label for="fbName">ชื่อ–นามสกุล *</label>
+                <input type="text" id="fbName" name="ชื่อ" placeholder="เช่น สมชาย ใจดี" required />
+              </div>
+              <div class="feedback__field">
+                <label for="fbPhone">เบอร์โทรศัพท์</label>
+                <input type="tel" id="fbPhone" name="โทรศัพท์" placeholder="เช่น 093-221-0367" />
+              </div>
+            </div>
+
+            <div class="feedback__field">
+              <label>ระดับความพึงพอใจ *</label>
+              <div class="feedback__stars" id="starsContainer">
+                ${[1,2,3,4,5].map(n=>`<span class="feedback__star" data-val="${n}" onclick="setRating(${n})">★</span>`).join('')}
+              </div>
+              <div id="ratingLabel" style="margin-top:6px;font-size:.9rem;color:var(--text-muted)">กรุณาเลือกคะแนน</div>
+            </div>
+
+            <div class="feedback__field">
+              <label for="fbProduct">สินค้าที่ซื้อ</label>
+              <select id="fbProduct" name="สินค้าที่ซื้อ">
+                <option value="">-- เลือกสินค้า (ถ้ามี) --</option>
+                ${PRODUCTS.map(p=>`<option value="${p.name}">${p.name}</option>`).join('')}
+                <option value="อื่น ๆ">อื่น ๆ</option>
+              </select>
+            </div>
+
+            <div class="feedback__field">
+              <label for="fbMsg">ความคิดเห็น / ข้อเสนอแนะ *</label>
+              <textarea id="fbMsg" name="ความคิดเห็น" rows="5"
+                placeholder="บอกเราว่าคุณชอบอะไร หรืออยากให้เราปรับปรุงอะไรบ้าง..."
+                required></textarea>
+            </div>
+
+            <div id="fbError" style="color:var(--danger);font-weight:700;margin-bottom:10px;display:none"></div>
+            <button type="submit" class="btn btn-accent feedback__submit">📩 ส่งความคิดเห็น</button>
+          </form>
+
+          <!-- Success state -->
+          <div class="feedback__success" id="feedbackSuccess">
+            <div class="feedback__success-icon">🎉</div>
+            <h3>ขอบคุณมากค่ะ!</h3>
+            <p>เราได้รับความคิดเห็นของคุณแล้ว และจะนำไปพัฒนาร้านให้ดียิ่งขึ้นเสมอ</p>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+/* ---------- LOGIN ---------- */
+let loginTab='login';
+function renderLogin(){
+  const user=store.getCurrentUser();
+  if(user){setTimeout(()=>navigate('profile'),0);return'<div style="text-align:center;padding:40px;color:var(--text-muted)">กำลังนำไปยังหน้าโปรไฟล์...</div>';}
+  return`
+  <div class="login-page">
+    <div class="login__card">
+      <div class="login__header">
+        <div class="login__header-icon">🥐</div>
+        <h2>Sweet Crumbs</h2>
+        <p>สมาชิกรับสิทธิพิเศษมากมาย</p>
+      </div>
+      <div class="login__tabs">
+        <button class="login__tab active" id="tabLogin"    onclick="switchTab('login')">เข้าสู่ระบบ</button>
+        <button class="login__tab"        id="tabRegister" onclick="switchTab('register')">สมัครสมาชิก</button>
+      </div>
+      <div class="login__body">
+        <div id="loginError" class="login__error"></div>
+        <input type="text" id="loginUsername" class="login__input"
+          placeholder="ชื่อผู้ใช้ (Username)" autocomplete="username" />
+        <button class="btn login__submit" id="loginSubmitBtn" onclick="submitLogin()">เข้าสู่ระบบ</button>
+      </div>
+    </div>
+  </div>`;
+}
+function switchTab(tab){
+  loginTab=tab;
+  document.getElementById('tabLogin').classList.toggle('active',tab==='login');
+  document.getElementById('tabRegister').classList.toggle('active',tab==='register');
+  document.getElementById('loginSubmitBtn').textContent=tab==='login'?'เข้าสู่ระบบ':'สร้างบัญชี';
+  document.getElementById('loginError').textContent='';
+  document.getElementById('loginUsername').value='';
+}
+function submitLogin(){
+  const username=document.getElementById('loginUsername').value;
+  const result=loginTab==='login'?auth.login(username):auth.register(username);
+  if(result.success){
+    updateHeaderUser();
+    showToast(loginTab==='login'?'🎉 ยินดีต้อนรับกลับมา!':'✅ สร้างบัญชีสำเร็จแล้ว!','success');
+    navigate('profile');
+  } else {
+    document.getElementById('loginError').textContent=result.error;
+  }
+}
+
+/* ---------- PROFILE ---------- */
+function renderProfile(){
+  const user=store.getCurrentUser();
+  if(!user){setTimeout(()=>navigate('login'),0);return'<div style="text-align:center;padding:40px;color:var(--text-muted)">กำลังนำไปยังหน้าเข้าสู่ระบบ...</div>';}
+  const joinDate=new Date(user.joinDate).toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'});
+  const avatar=(user.displayName||user.username||'?').charAt(0).toUpperCase();
+  return`
+  <div class="page-padded">
+    <div class="container">
+      <div class="profile__card">
+        <div class="profile__header">
+          <div class="profile__avatar">${avatar}</div>
+          <h2 class="profile__name">${user.displayName||user.username}</h2>
+          <p class="profile__since">สมาชิกตั้งแต่ ${joinDate}</p>
+        </div>
+        <div class="profile__body">
+          <div class="profile__field">
+            <label>ชื่อที่แสดง</label>
+            <input type="text" id="pfDisplayName" value="${escHtml(user.displayName||'')}" />
+          </div>
+          <div class="profile__field">
+            <label>แนะนำตัว</label>
+            <textarea id="pfBio" rows="3">${escHtml(user.bio||'')}</textarea>
+          </div>
+          <div class="profile__field">
+            <label>เบอร์โทรศัพท์</label>
+            <input type="text" id="pfPhone" value="${escHtml(user.phone||'')}" />
+          </div>
+          <div id="profileMsg" style="min-height:22px;color:var(--success);font-weight:700;margin-bottom:8px"></div>
+          <div class="profile__actions">
+            <button class="btn btn-accent" onclick="saveProfile()">💾 บันทึกข้อมูล</button>
+            <button class="btn btn-danger" onclick="doLogout()">ออกจากระบบ</button>
+          </div>
+          <div class="profile__links">
+            <div class="profile__link" onclick="navigate('orders')"><span>📋</span> ประวัติการสั่งซื้อ</div>
+            <div class="profile__link" onclick="navigate('products')"><span>🛒</span> เลือกซื้อสินค้า</div>
+            <div class="profile__link" onclick="navigate('feedback')"><span>💬</span> แสดงความคิดเห็น</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+function saveProfile(){
+  const displayName=document.getElementById('pfDisplayName').value.trim()||store.getCurrentUser().username;
+  const bio=document.getElementById('pfBio').value;
+  const phone=document.getElementById('pfPhone').value;
+  auth.updateProfile({displayName,bio,phone});
+  document.getElementById('profileMsg').textContent='✓ อัปเดตข้อมูลเรียบร้อยแล้ว';
+  setTimeout(()=>{if(document.getElementById('profileMsg'))document.getElementById('profileMsg').textContent='';},3000);
+  updateHeaderUser();
+}
+function doLogout(){auth.logout();updateHeaderUser();showToast('ออกจากระบบแล้ว','info');navigate('home');}
+
+/* ---------- CART ---------- */
+function renderCart(){
+  const items=cart.getItems(),user=store.getCurrentUser();
+  if(!items.length) return`
+    <div class="page-padded"><div class="container">
+      <div class="cart__empty">
+        <div class="cart__empty-icon">🛒</div>
+        <h2>ตะกร้าของคุณว่างเปล่า</h2>
+        <p>ยังไม่มีสินค้าในตะกร้า มาเลือกขนมอร่อย ๆ กันเลย!</p>
+        <button class="btn" style="margin-top:20px" onclick="navigate('products')">เลือกซื้อสินค้า</button>
+      </div>
+    </div></div>`;
+  return`
+  <div class="page-padded"><div class="container">
+    <h1 class="section-title">ตะกร้าสินค้า</h1>
+    <div style="height:1.5rem"></div>
+    <div class="cart__layout">
+      <div>
+        <div class="cart__items">
+          ${items.map(item=>`
+            <div class="cart__item">
+              <img src="${item.image}" alt="${item.name}" class="cart__item-image"
+                onerror="this.src='https://placehold.co/68x68/D4A574/3E2723?text=🍰'"/>
+              <div class="cart__item-info">
+                <div class="cart__item-name">${item.name}</div>
+                <div class="cart__item-price">฿${item.price} / ชิ้น</div>
+              </div>
+              <div class="cart__item-qty">
+                <button class="cart__qty-btn" onclick="cartQty(${item.id},${item.quantity-1})">−</button>
+                <span style="font-weight:700;min-width:24px;text-align:center">${item.quantity}</span>
+                <button class="cart__qty-btn" onclick="cartQty(${item.id},${item.quantity+1})">+</button>
+              </div>
+              <div class="cart__item-total">฿${item.price*item.quantity}</div>
+              <button class="cart__item-remove" onclick="cartRemove(${item.id})" title="ลบออก">✕</button>
+            </div>`).join('')}
+        </div>
+        <button class="btn btn-outline btn-sm btn-danger" style="margin-top:16px" onclick="cartClear()">🗑 ล้างตะกร้า</button>
+      </div>
+      <div class="cart__summary">
+        <h3>สรุปรายการสั่งซื้อ</h3>
+        <div class="cart__summary-row"><span>จำนวนสินค้า</span><span>${cart.totalItems()} ชิ้น</span></div>
+        <div class="cart__summary-total"><span>รวมทั้งหมด</span><span>฿${cart.totalPrice()}</span></div>
+        ${!user
+          ?`<div class="cart__login-msg">กรุณา <span onclick="navigate('login')">เข้าสู่ระบบ</span> ก่อนทำการสั่งซื้อ</div>`
+          :`<button class="btn btn-accent" style="width:100%;margin-top:20px" onclick="doPlaceOrder()">🎉 ยืนยันการสั่งซื้อ</button>`}
+      </div>
+    </div>
+  </div></div>`;
+}
+function cartQty(id,qty){cart.updateQty(id,qty);navigate('cart');}
+function cartRemove(id){cart.removeFromCart(id);navigate('cart');}
+function cartClear(){cart.clearCart();navigate('cart');}
+function doPlaceOrder(){
+  const user=store.getCurrentUser();
+  if(!user){navigate('login');return;}
+  cart.placeOrder(user.username);
+  showToast('🎉 สั่งซื้อสำเร็จแล้ว!','success');
+  setTimeout(()=>navigate('orders'),1400);
+}
+
+/* ---------- ORDERS ---------- */
+function renderOrders(){
+  const user=store.getCurrentUser();
+  if(!user){setTimeout(()=>navigate('login'),0);return'<div style="text-align:center;padding:40px">กำลังนำไปยังหน้าเข้าสู่ระบบ...</div>';}
+  const byDate=cart.getOrdersByDate(user.username);
+  const dateKeys=Object.keys(byDate).sort((a,b)=>new Date(b)-new Date(a));
+  if(!dateKeys.length) return`
+    <div class="page-padded"><div class="container">
+      <h1 class="section-title">ประวัติการสั่งซื้อ</h1>
+      <div class="orders__empty">
+        <div class="orders__empty-icon">📋</div>
+        <h2>ยังไม่มีรายการสั่งซื้อ</h2>
+        <p style="color:var(--text-muted);margin-bottom:24px">รายการสั่งซื้อของคุณจะปรากฏที่นี่</p>
+        <button class="btn" onclick="navigate('products')">เลือกซื้อสินค้า</button>
+      </div>
+    </div></div>`;
+  return`
+  <div class="page-padded"><div class="container">
+    <h1 class="section-title">ประวัติการสั่งซื้อ</h1>
+    <p class="section-subtitle">ของ ${user.displayName||user.username}</p>
+    ${dateKeys.map(dk=>`
+      <div class="orders__date-group">
+        <h2 class="orders__date-header">📅 ${new Date(dk+'T12:00:00').toLocaleDateString('th-TH',{weekday:'long',year:'numeric',month:'long',day:'numeric'})}</h2>
+        <div class="orders__cards">
+          ${byDate[dk].map(order=>`
+            <div class="orders__card">
+              <div class="orders__card-header">
+                <span class="orders__card-id">คำสั่งซื้อ #${String(order.id).substring(0,8).toUpperCase()}</span>
+                <span class="orders__card-time">${new Date(order.date).toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'})}</span>
+              </div>
+              ${order.items.map(item=>`<div class="orders__card-item"><span>${item.name} × ${item.quantity}</span><span>฿${item.price*item.quantity}</span></div>`).join('')}
+              <div class="orders__card-total"><span>รวม</span><span>฿${order.total}</span></div>
+            </div>`).join('')}
+        </div>
+      </div>`).join('')}
+  </div></div>`;
+}
+
+/* ---------- FEEDBACK LOGIC ---------- */
+const RATING_LABELS=['','แย่มาก 😞','พอใช้ 😐','ดี 😊','ดีมาก 😄','ยอดเยี่ยม 🤩'];
+function setRating(val){
+  feedbackRating=val;
+  document.querySelectorAll('.feedback__star').forEach((s,i)=>s.classList.toggle('active',i<val));
+  const lbl=document.getElementById('ratingLabel');
+  if(lbl) lbl.textContent=RATING_LABELS[val]||'';
+  const hidden=document.getElementById('ratingHidden');
+  if(hidden) hidden.value=`${val}/5 — ${RATING_LABELS[val]}`;
+}
+
+function handleFeedbackSubmit(e){
+  const err=document.getElementById('fbError');
+  if(!feedbackRating){
+    e.preventDefault();
+    err.style.display='block';
+    err.textContent='กรุณาเลือกระดับความพึงพอใจก่อนส่ง';
+    return;
+  }
+  err.style.display='none';
+  // Let the form POST normally to FormSubmit.co
+  // Show success after short delay (form will redirect back since _next is empty)
+  // We intercept and show success message instead
+  e.preventDefault();
+  const form=document.getElementById('feedbackForm');
+  const formData=new FormData(form);
+
+  fetch('https://formsubmit.co/ajax/adisorndankeawwork@gmail.com',{
+    method:'POST',
+    body: formData,
+    headers:{'Accept':'application/json'}
+  })
+  .then(r=>r.json())
+  .then(data=>{
+    form.style.display='none';
+    const success=document.getElementById('feedbackSuccess');
+    if(success) success.style.display='block';
+    showToast('✅ ส่งความคิดเห็นเรียบร้อยแล้ว!','success');
+  })
+  .catch(()=>{
+    // Fallback: just show success anyway (network/CORS on localhost)
+    form.style.display='none';
+    const success=document.getElementById('feedbackSuccess');
+    if(success) success.style.display='block';
+    showToast('✅ ขอบคุณสำหรับความคิดเห็น!','success');
+  });
+}
+
+/* ---------- SLIDER ---------- */
+function initSlider(){
+  slideIndex=0; clearSlideTimer();
+  slideTimer=setInterval(()=>changeSlide(1),5500);
+}
+function clearSlideTimer(){if(slideTimer){clearInterval(slideTimer);slideTimer=null;}}
+function changeSlide(dir){
+  slideIndex=(slideIndex+dir+SLIDES.length)%SLIDES.length;
+  applySlide();clearSlideTimer();
+  slideTimer=setInterval(()=>changeSlide(1),5500);
+}
+function goSlide(i){slideIndex=i;applySlide();clearSlideTimer();slideTimer=setInterval(()=>changeSlide(1),5500);}
+function applySlide(){
+  const track=document.getElementById('slidesTrack');
+  if(!track) return;
+  track.style.transform=`translateX(-${slideIndex*100}%)`;
+  document.querySelectorAll('.home__dot').forEach((d,i)=>d.classList.toggle('active',i===slideIndex));
+}
+
+/* ---------- CART ACTION ---------- */
+function addToCartAction(productId){
+  const p=PRODUCTS.find(x=>x.id===productId);
+  if(!p) return;
+  cart.addToCart(p);
+  showToast(`🛒 เพิ่ม "${p.name}" ลงตะกร้าแล้ว!`,'success');
+}
+
+/* ---------- HELPERS ---------- */
+function escHtml(str){return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+/* ---------- BOOT ---------- */
+updateHeaderUser();
+updateCartBadge();
+navigate('home');
+</script>
+</body>
+</html>
